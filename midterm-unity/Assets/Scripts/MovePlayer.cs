@@ -15,6 +15,9 @@ public class MovePlayer : MonoBehaviour {
 	private Rigidbody rb;
 	private int count;
 
+  private bool onGround = true;
+  private bool wasOnGround = false;
+
 	//************* Need to setup this server dictionary...
 	Dictionary<string, ServerLog> servers = new Dictionary<string, ServerLog> ();
 	//*************
@@ -36,6 +39,16 @@ public class MovePlayer : MonoBehaviour {
 		setCountText (0);
 	}
 	
+
+  void Update()
+  {
+    if (Input.GetKeyDown(KeyCode.Space) && onGround)
+    {
+        rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+        onGround = false;
+    }
+  }
+
 
 	void FixedUpdate()
 	{
@@ -67,6 +80,13 @@ public class MovePlayer : MonoBehaviour {
 			}
 		}
 		//*************
+
+    if (!wasOnGround && onGround)
+    {
+      OSCHandler.Instance.SendMessageToClient ("pd", "/unity/NoiseChannel", count);
+    }
+
+    wasOnGround = onGround;
 	}
 		
 
@@ -84,6 +104,22 @@ public class MovePlayer : MonoBehaviour {
 			setCountText (2);
 		}
 	}
+
+  void OnCollisionStay(Collision collision)
+  {
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+      onGround = true;
+    }
+  }
+
+  void OnCollisionExit(Collision collision)
+  {
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+      onGround = false;
+    }
+  }
 
 	void setCountText(int type)
 	{
