@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "group_mambo_cmpm_151_midterm_unity.slnx",
+    "dotnet.defaultSolution": "midterm-unity.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }
