@@ -15,6 +15,8 @@ public class MovePlayer : MonoBehaviour {
 	private Rigidbody rb;
 	private int count;
 
+  private bool onGround = true;
+
 	//************* Need to setup this server dictionary...
 	Dictionary<string, ServerLog> servers = new Dictionary<string, ServerLog> ();
 	//*************
@@ -33,9 +35,19 @@ public class MovePlayer : MonoBehaviour {
 
         rb = GetComponent<Rigidbody> ();
 		count = 0;
-		setCountText ();
+		setCountText (0);
 	}
 	
+
+  void Update()
+  {
+    if (Input.GetKeyDown(KeyCode.Space) && onGround)
+    {
+      rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+      onGround = false;
+    }
+  }
+
 
 	void FixedUpdate()
 	{
@@ -76,19 +88,40 @@ public class MovePlayer : MonoBehaviour {
 		{
 			other.gameObject.SetActive (false);
 			count = count + 1;
-			setCountText ();
+			setCountText (1);
+		} else if (other.gameObject.CompareTag ("Pick Up 2")) 
+		{
+			other.gameObject.SetActive (false);
+			count = count + 1;
+			setCountText (2);
 		}
 	}
 
-	void setCountText()
-	{
-        countText.text = "Count: " + count.ToString();
-
-        //************* Send the message to the client...	
-        OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave1", count);
-        //*************
-
-
+  void OnCollisionEnter(Collision collision)
+  {
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+      OSCHandler.Instance.SendMessageToClient("pd", "/unity/NoiseChannel", count);
+      onGround = true;
     }
+  }
+
+  void OnCollisionExit(Collision collision)
+  {
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+      onGround = false;
+    }
+  }
+
+	void setCountText(int type)
+	{
+    countText.text = "Count: " + count.ToString();
+
+    //************* Send the message to the client...	
+    if (type == 1) OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave1", count);
+    if (type == 2) OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave2", count);
+    //*************
+  }
 		
 }
