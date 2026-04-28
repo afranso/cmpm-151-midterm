@@ -1,4 +1,4 @@
-#N canvas 129 64 1625 925 12;
+#N canvas 334 167 1625 925 12;
 #X obj 23 12 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X msg 23 36 \; pd dsp \$1;
 #N canvas 793 146 656 559 oscReceive 0;

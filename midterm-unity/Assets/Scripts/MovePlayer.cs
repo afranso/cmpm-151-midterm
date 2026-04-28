@@ -16,7 +16,6 @@ public class MovePlayer : MonoBehaviour {
 	private int count;
 
   private bool onGround = true;
-  private bool wasOnGround = false;
 
 	//************* Need to setup this server dictionary...
 	Dictionary<string, ServerLog> servers = new Dictionary<string, ServerLog> ();
@@ -44,8 +43,8 @@ public class MovePlayer : MonoBehaviour {
   {
     if (Input.GetKeyDown(KeyCode.Space) && onGround)
     {
-        rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
-        onGround = false;
+      rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+      onGround = false;
     }
   }
 
@@ -80,13 +79,6 @@ public class MovePlayer : MonoBehaviour {
 			}
 		}
 		//*************
-
-    if (!wasOnGround && onGround)
-    {
-      OSCHandler.Instance.SendMessageToClient ("pd", "/unity/NoiseChannel", count);
-    }
-
-    wasOnGround = onGround;
 	}
 		
 
@@ -105,10 +97,11 @@ public class MovePlayer : MonoBehaviour {
 		}
 	}
 
-  void OnCollisionStay(Collision collision)
+  void OnCollisionEnter(Collision collision)
   {
     if (collision.gameObject.CompareTag("Ground"))
     {
+      OSCHandler.Instance.SendMessageToClient("pd", "/unity/NoiseChannel", count);
       onGround = true;
     }
   }
