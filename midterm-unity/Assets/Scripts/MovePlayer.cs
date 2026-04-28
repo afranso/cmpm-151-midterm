@@ -33,7 +33,7 @@ public class MovePlayer : MonoBehaviour {
 
         rb = GetComponent<Rigidbody> ();
 		count = 0;
-		setCountText ();
+		setCountText (0);
 	}
 	
 
@@ -76,19 +76,23 @@ public class MovePlayer : MonoBehaviour {
 		{
 			other.gameObject.SetActive (false);
 			count = count + 1;
-			setCountText ();
+			setCountText (1);
+		} else if (other.gameObject.CompareTag ("Pick Up 2")) 
+		{
+			other.gameObject.SetActive (false);
+			count = count + 1;
+			setCountText (2);
 		}
 	}
 
-	void setCountText()
+	void setCountText(int type)
 	{
-        countText.text = "Count: " + count.ToString();
+    countText.text = "Count: " + count.ToString();
 
-        //************* Send the message to the client...	
-        OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave1", count);
-        //*************
-
-
-    }
+    //************* Send the message to the client...	
+    if (type == 1) OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave1", count);
+    if (type == 2) OSCHandler.Instance.SendMessageToClient ("pd", "/unity/PulseWave2", count);
+    //*************
+  }
 		
 }
